@@ -24,8 +24,6 @@ RUN CHROME_DRIVER_VERSION=$(curl -sS chromedriver.storage.googleapis.com/LATEST_
 COPY . /home/site/wwwroot
 WORKDIR /home/site/wwwroot
 
-RUN chmod +x /home/site/wwwroot/selenium-manager/linux/selenium-manager
-
 # Pre-warm extension bundles (this helps avoid timeout during startup)
 ENV AzureWebJobsScriptRoot=/home/site/wwwroot
 RUN if [ -f "host.json" ]; then \
