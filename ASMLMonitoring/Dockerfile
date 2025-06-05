@@ -20,8 +20,8 @@ RUN CHROME_DRIVER_VERSION=$(curl -sS chromedriver.storage.googleapis.com/LATEST_
     mv chromedriver /usr/bin/chromedriver && \
     chmod +x /usr/bin/chromedriver
 
-# Copy function app files first
-COPY . /home/site/wwwroot
+# Copy function app files from the ASMLMonitoring subdirectory
+COPY ./ASMLMonitoring /home/site/wwwroot
 WORKDIR /home/site/wwwroot
 
 # Pre-warm extension bundles (this helps avoid timeout during startup)
