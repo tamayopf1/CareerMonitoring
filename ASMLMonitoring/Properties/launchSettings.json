@@ -1,0 +1,21 @@
+{
+  "profiles": {
+    "ASMLMonitoring": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7133",
+      "environmentVariables": {
+        "SENDGRID_API_KEY": "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",
+        "EMAIL_FROM": "asmlmonitoring@gmail.com",
+        "EMAIL_RECIPIENTS": "prince.jake.tamayo@accenture.com,jake.tamayo@asml.com",
+        "TIMER_SCHEDULE": "0 * * * * *"
+      }
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker",
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
+      "containerRunArguments": "--init",
+      "httpPort": 32798,
+      "useSSL": false
+    }
+  }
+}

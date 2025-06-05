@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35825.156 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ASMLMonitoring", "ASMLMonitoring\ASMLMonitoring.csproj", "{DA34B9DE-97F4-434C-BFC4-066B13660B10}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+		SENDGRID_API_KEY|Any CPU = SENDGRID_API_KEY|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DA34B9DE-97F4-434C-BFC4-066B13660B10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA34B9DE-97F4-434C-BFC4-066B13660B10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA34B9DE-97F4-434C-BFC4-066B13660B10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA34B9DE-97F4-434C-BFC4-066B13660B10}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA34B9DE-97F4-434C-BFC4-066B13660B10}.SENDGRID_API_KEY|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA34B9DE-97F4-434C-BFC4-066B13660B10}.SENDGRID_API_KEY|Any CPU.Build.0 = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {132AC71C-E887-4CF8-BDD6-474671281D7E}
+	EndGlobalSection
+EndGlobal
