@@ -24,12 +24,6 @@ RUN CHROME_DRIVER_VERSION=$(curl -sS chromedriver.storage.googleapis.com/LATEST_
 COPY ./ASMLMonitoring /home/site/wwwroot
 WORKDIR /home/site/wwwroot
 
-# Pre-warm extension bundles (this helps avoid timeout during startup)
-ENV AzureWebJobsScriptRoot=/home/site/wwwroot
-RUN if [ -f "host.json" ]; then \
-    timeout 300 /azure-functions-host/Microsoft.Azure.WebJobs.Script.WebHost || true; \
-    fi
-
 # Set environment variables
 ENV PATH="/usr/bin/chromedriver:${PATH}" \
     AzureFunctionsJobHost__Logging__Console__IsEnabled=true \
