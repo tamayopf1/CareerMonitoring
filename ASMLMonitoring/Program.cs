@@ -1,14 +1,19 @@
-using Microsoft.Azure.Functions.Worker;
-using Microsoft.Azure.Functions.Worker.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-var builder = FunctionsApplication.CreateBuilder(args);
+var host = new HostBuilder()
+    .ConfigureAppConfiguration((context, builder) =>
+    {
+        builder.SetBasePath(context.HostingEnvironment.ContentRootPath)
+               .AddEnvironmentVariables();
+    })
+    .ConfigureServices((context, services) =>
+    {
+        var configuration = context.Configuration;
 
-builder.ConfigureFunctionsWebApplication();
+        services.AddLogging();
+    })
+    .Build();
 
-builder.Services
-    .AddApplicationInsightsTelemetryWorkerService()
-    .ConfigureFunctionsApplicationInsights();
-
-builder.Build().Run();
+host.Run();
