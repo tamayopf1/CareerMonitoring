@@ -22,9 +22,9 @@ jobs:
     - name: Log in to registry
       uses: docker/login-action@v2
       with:
-        registry: https://acrasmlmonitoring.azurecr.io/
-        username: ${{ secrets.AzureAppService_ContainerUsername_9fed82d3ebc546709fe63cba0cf3adfb }}
-        password: ${{ secrets.AzureAppService_ContainerPassword_0ab0509c1029485f8f2cc74ccb0e8e5d }}
+        registry: ${{ secrets.REGISTRY_URL }}
+        username: ${{ secrets.REGISTRY_USERNAME }}
+        password: ${{ secrets.REGISTRY_PASSWORD }}
 
     - name: Build and push container image to registry
       uses: docker/build-push-action@v3
