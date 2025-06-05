@@ -4,7 +4,7 @@ FROM mcr.microsoft.com/azure-functions/dotnet-isolated:4-dotnet-isolated8.0
 RUN apt-get update && apt-get install -y \
     wget gnupg unzip curl libxss1 libappindicator1 \
     libnss3 libx11-xcb1 libxcomposite1 libxcursor1 \
-    libxdamage1 libxi6 libxtst6 fonts-liberation \
+    libxdamage1 libgbm1 libvulkan1 libxi6 libxtst6 fonts-liberation \
     libasound2 libatk-bridge2.0-0 libgtk-3-0 xdg-utils \
     --no-install-recommends && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
