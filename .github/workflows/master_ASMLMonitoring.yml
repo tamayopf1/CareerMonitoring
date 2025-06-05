@@ -29,9 +29,10 @@ jobs:
     - name: Build and push container image to registry
       uses: docker/build-push-action@v3
       with:
+        context: ./ASMLMonitoring
         push: true
         tags: acrasmlmonitoring.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_9fed82d3ebc546709fe63cba0cf3adfb }}/asmlmonitoringapp:${{ github.sha }}
-        file: ./ASMLMonitoring/Dockerfile
+        file: ./Dockerfile
 
   deploy:
     runs-on: ubuntu-latest
