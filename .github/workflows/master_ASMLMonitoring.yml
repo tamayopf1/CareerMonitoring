@@ -23,14 +23,14 @@ jobs:
       uses: docker/login-action@v2
       with:
         registry: https://acrasmlmonitoring.azurecr.io/
-        username: ${{ secrets.AzureAppService_ContainerUsername_ab2d2e36decf40ef97886274ccb40526 }}
-        password: ${{ secrets.AzureAppService_ContainerPassword_3535a71fea4e47789cf7019661b956c3 }}
+        username: ${{ secrets.AzureAppService_ContainerUsername_9fed82d3ebc546709fe63cba0cf3adfb }}
+        password: ${{ secrets.AzureAppService_ContainerPassword_0ab0509c1029485f8f2cc74ccb0e8e5d }}
 
     - name: Build and push container image to registry
       uses: docker/build-push-action@v3
       with:
         push: true
-        tags: acrasmlmonitoring.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_ab2d2e36decf40ef97886274ccb40526 }}/asmlmonitoringapp:${{ github.sha }}
+        tags: acrasmlmonitoring.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_9fed82d3ebc546709fe63cba0cf3adfb }}/asmlmonitoringapp:${{ github.sha }}
         file: ./Dockerfile
 
   deploy:
@@ -47,5 +47,5 @@ jobs:
       with:
         app-name: 'ASMLMonitoring'
         slot-name: 'production'
-        publish-profile: ${{ secrets.AzureAppService_PublishProfile_379fe205104c4d429fd76568a1273a6d }}
-        images: 'acrasmlmonitoring.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_ab2d2e36decf40ef97886274ccb40526 }}/asmlmonitoringapp:${{ github.sha }}'
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_7cbf6d37437e41498501c49bedce90ac }}
+        images: 'acrasmlmonitoring.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_9fed82d3ebc546709fe63cba0cf3adfb }}/asmlmonitoringapp:${{ github.sha }}'
