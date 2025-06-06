@@ -24,7 +24,7 @@ public class ASMLMonitoring
     => await Monitor("https://www.asml.com/en/careers/find-your-job");
 
     [Function("ASMLMonitoring_DE")]
-    public async Task RunDE([TimerTrigger("%TIMER_SCHEDULE_EN%")] TimerInfo myTimer)
+    public async Task RunDE([TimerTrigger("%TIMER_SCHEDULE_DE%")] TimerInfo myTimer)
     => await Monitor("https://www.asml.com/de-de/karriere/stellenangebote");
 
     public async Task Monitor(string url)
