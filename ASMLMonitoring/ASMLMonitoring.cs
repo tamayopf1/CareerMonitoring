@@ -19,8 +19,15 @@ public class ASMLMonitoring
         _logger = loggerFactory.CreateLogger<ASMLMonitoring>();
     }
 
-    [Function("ASMLMonitoring")]
-    public async Task Run([TimerTrigger("%TIMER_SCHEDULE%")] TimerInfo myTimer)
+    [Function("ASMLMonitoring_EN")]
+    public async Task RunEN([TimerTrigger("%TIMER_SCHEDULE_EN%")] TimerInfo myTimer)
+    => await Monitor("https://www.asml.com/en/careers/find-your-job");
+
+    [Function("ASMLMonitoring_DE")]
+    public async Task RunDE([TimerTrigger("%TIMER_SCHEDULE_EN%")] TimerInfo myTimer)
+    => await Monitor("https://www.asml.com/de-de/karriere/stellenangebote");
+
+    public async Task Monitor(string url)
     {
             var options = new ChromeOptions();
             options.AddArgument("--headless");
@@ -31,7 +38,7 @@ public class ASMLMonitoring
 
             using var driver = new ChromeDriver(options);
 
-            driver.Navigate().GoToUrl("https://www.asml.com/en/careers/find-your-job");
+            driver.Navigate().GoToUrl(url);
 
             // Wait up to 10 seconds for the job list to load
             var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
@@ -41,22 +48,22 @@ public class ASMLMonitoring
             if (jobItems.Count == 0)
             {
                 _logger.LogInformation("No Joblisting found.");
-                await SendEmailAsync("No Joblisting found.");    
+                await SendEmailAsync($"No Joblisting found on {url}", url);    
             }
             else
             {
-                _logger.LogInformation($"Jobs found.");
+                _logger.LogInformation($"Jobs found on {url}");
             }
 
             driver.Quit();
     }
 
-    public async Task SendEmailAsync(string messageBody)
+    public async Task SendEmailAsync(string messageBody, string url)
     {
         var apiKey = Environment.GetEnvironmentVariable("SENDGRID_API_KEY");
         var recipientsString = Environment.GetEnvironmentVariable("EMAIL_RECIPIENTS");
         var fromEmail = Environment.GetEnvironmentVariable("EMAIL_FROM");
-        var subject = Environment.GetEnvironmentVariable("EMAIL_SUBJECT") ?? "ASML Jobs Monitoring Alert: No Jobs Found.";
+        var subject = Environment.GetEnvironmentVariable("EMAIL_SUBJECT") ?? $"ASML Jobs Monitoring Alert: No Jobs Found on {url}";
 
         if (string.IsNullOrEmpty(recipientsString))
         {
@@ -80,6 +87,7 @@ public class ASMLMonitoring
         }
 
         var response = await client.SendEmailAsync(msg);
-        Console.WriteLine($"Email sent to {recipients.Count} recipients. Status: {response.StatusCode}");
+        var recipientList = string.Join(", ", recipients);
+        Console.WriteLine($"Email sent to {recipients.Count} recipients [{recipientList}]. Status: {response.StatusCode}");
     }
 }
