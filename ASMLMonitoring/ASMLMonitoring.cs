@@ -34,7 +34,18 @@ public class ASMLMonitoring
         options.AddArgument("--disable-gpu");
         options.AddArgument("--no-sandbox");
         options.AddArgument("--disable-dev-shm-usage");
+        options.AddArgument("--disable-software-rasterizer");
+        options.AddArgument("--disable-dev-tools");
         options.AddArgument("--remote-debugging-port=9222");
+        options.AddArgument("--remote-allow-origins=*");
+        options.AddArgument("--window-size=1920,1080");
+        options.AddArgument("--disable-background-networking");
+        options.AddArgument("--disable-default-apps");
+        options.AddArgument("--disable-extensions");
+        options.AddArgument("--disable-sync");
+        options.AddArgument("--metrics-recording-only");
+        options.AddArgument("--mute-audio");
+        options.AddArgument("--no-first-run");
         options.BinaryLocation = "/usr/bin/google-chrome";
 
         using var driver = new ChromeDriver(options);
