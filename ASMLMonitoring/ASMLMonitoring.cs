@@ -7,6 +7,7 @@ using OpenQA.Selenium;
 using SendGrid.Helpers.Mail;
 using SendGrid;
 using System.Net;
+using Microsoft.Playwright;
 
 namespace ASMLMonitoring;
 
@@ -29,45 +30,36 @@ public class ASMLMonitoring
 
     public async Task Monitor(string url)
     {
-        var options = new ChromeOptions();
-        options.AddArgument("--headless=new");
-        options.AddArgument("--disable-gpu");
-        options.AddArgument("--no-sandbox");
-        options.AddArgument("--disable-dev-shm-usage");
-        options.AddArgument("--disable-software-rasterizer");
-        options.AddArgument("--disable-dev-tools");
-        options.AddArgument("--remote-debugging-port=9222");
-        options.AddArgument("--remote-allow-origins=*");
-        options.AddArgument("--window-size=1920,1080");
-        options.AddArgument("--disable-background-networking");
-        options.AddArgument("--disable-default-apps");
-        options.AddArgument("--disable-extensions");
-        options.AddArgument("--disable-sync");
-        options.AddArgument("--metrics-recording-only");
-        options.AddArgument("--mute-audio");
-        options.AddArgument("--no-first-run");
-        options.BinaryLocation = "/usr/bin/google-chrome";
+        using var playwright = await Playwright.CreateAsync();
+        await using var browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
+        {
+            Headless = true
+        });
 
-        using var driver = new ChromeDriver(options);
+        var page = await browser.NewPageAsync();
+        await page.GotoAsync(url);
 
-        driver.Navigate().GoToUrl(url);
-
-        // Wait up to 10 seconds for the job list to load
-        var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
         var selector = Environment.GetEnvironmentVariable("JOB_ELEMENT_SELECTOR") ?? "li[class^='orders-']";
-        var jobItems = driver.FindElements(By.CssSelector(selector));
 
-         if (jobItems.Count == 0)
-          {
-              _logger.LogInformation("No Joblisting found.");
-              await SendEmailAsync($"No Joblisting found on {url}", url);    
-          }
-          else
-          {
-              _logger.LogInformation($"Jobs found on {url}");
-          }
+        try
+        {
+            var jobItems = await page.QuerySelectorAllAsync(selector);
 
-        driver.Quit();
+            if (jobItems.Count == 0)
+            {
+                _logger.LogInformation("No Joblisting found.");
+                await SendEmailAsync($"No Joblisting found on {url}", url);
+            }
+            else
+            {
+                _logger.LogInformation($"Jobs found on {url}");
+            }
+        }
+        catch (TimeoutException)
+        {
+            _logger.LogInformation("No Joblisting found (timeout).");
+            await SendEmailAsync($"No Joblisting found on {url}", url);
+        }
     }
 
     public async Task SendEmailAsync(string messageBody, string url)

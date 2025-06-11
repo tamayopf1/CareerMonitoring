@@ -1,33 +1,27 @@
+FROM mcr.microsoft.com/playwright/dotnet:v1.40.0-jammy AS playwright-base
+
 FROM mcr.microsoft.com/azure-functions/dotnet-isolated:4-dotnet-isolated8.0 AS base
 WORKDIR /home/site/wwwroot
 EXPOSE 8080
 
-# Install Chrome dependencies
+# Copy Playwright browsers and dependencies from the Playwright base image
+COPY --from=playwright-base /ms-playwright /ms-playwright
+COPY --from=playwright-base /usr/lib/x86_64-linux-gnu /usr/lib/x86_64-linux-gnu
+COPY --from=playwright-base /usr/bin/playwright /usr/bin/playwright
+
+# Install minimal required system packages
 RUN apt-get update && apt-get install -y \
-    wget gnupg unzip curl libxss1 libappindicator1 \
-    libnss3 libx11-xcb1 libxcomposite1 libxcursor1 \
-    libxdamage1 libgbm1 libvulkan1 libxi6 libxtst6 fonts-liberation \
-    libasound2 libatk-bridge2.0-0 libgtk-3-0 xdg-utils \
+    libnss3 \
+    libatk-bridge2.0-0 \
+    libdrm2 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxrandr2 \
+    libgbm1 \
+    libxss1 \
+    libasound2 \
     --no-install-recommends && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# Install Chrome
-RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
-    dpkg -i google-chrome-stable_current_amd64.deb || apt-get -fy install
-
-# Install ChromeDriver (Updated method for Chrome 115+)
-RUN CHROME_VERSION=$(google-chrome --version | cut -d ' ' -f3 | cut -d '.' -f1-3) && \
-    echo "Chrome version: $CHROME_VERSION" && \
-    CHROMEDRIVER_VERSION=$(curl -s "https://googlechromelabs.github.io/chrome-for-testing/LATEST_RELEASE_$CHROME_VERSION") && \
-    echo "ChromeDriver version: $CHROMEDRIVER_VERSION" && \
-    wget -N "https://storage.googleapis.com/chrome-for-testing-public/$CHROMEDRIVER_VERSION/linux64/chromedriver-linux64.zip" && \
-    unzip chromedriver-linux64.zip && \
-    mv chromedriver-linux64/chromedriver /usr/bin/chromedriver && \
-    chmod +x /usr/bin/chromedriver && \
-    rm -rf chromedriver-linux64.zip chromedriver-linux64
-
-# Verify installation
-RUN google-chrome --version && chromedriver --version
 
 # This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
@@ -58,3 +52,4 @@ ENV PATH="/usr/bin/chromedriver:${PATH}" \
     TIMER_SCHEDULE="0 * * * * *" \
     EMAIL_FROM="asmlmonitoring@gmail.com" \
     EMAIL_RECIPIENTS="prince.jake.tamayo@accenture.com"
+    PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
