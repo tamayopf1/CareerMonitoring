@@ -1,25 +1,47 @@
-FROM mcr.microsoft.com/playwright/dotnet:v1.40.0-jammy AS playwright-base
 
 FROM mcr.microsoft.com/azure-functions/dotnet-isolated:4-dotnet-isolated8.0 AS base
 WORKDIR /home/site/wwwroot
 EXPOSE 8080
 
-# Copy Playwright browsers and dependencies from the Playwright base image
-COPY --from=playwright-base /ms-playwright /ms-playwright
-COPY --from=playwright-base /usr/lib/x86_64-linux-gnu /usr/lib/x86_64-linux-gnu
-COPY --from=playwright-base /usr/bin/playwright /usr/bin/playwright
-
-# Install minimal required system packages
+# Install system dependencies required by Playwright
 RUN apt-get update && apt-get install -y \
-    libnss3 \
-    libatk-bridge2.0-0 \
-    libdrm2 \
-    libxcomposite1 \
-    libxdamage1 \
-    libxrandr2 \
-    libgbm1 \
-    libxss1 \
+    wget \
+    unzip \
+    fontconfig \
+    fonts-liberation \
     libasound2 \
+    libatk-bridge2.0-0 \
+    libatk1.0-0 \
+    libatspi2.0-0 \
+    libcairo2 \
+    libcups2 \
+    libdbus-1-3 \
+    libdrm2 \
+    libfontconfig1 \
+    libgbm1 \
+    libgconf-2-4 \
+    libgdk-pixbuf2.0-0 \
+    libglib2.0-0 \
+    libgtk-3-0 \
+    libharfbuzz0b \
+    libnspr4 \
+    libnss3 \
+    libpango-1.0-0 \
+    libpangocairo-1.0-0 \
+    libx11-6 \
+    libx11-xcb1 \
+    libxcb1 \
+    libxcomposite1 \
+    libxcursor1 \
+    libxdamage1 \
+    libxext6 \
+    libxfixes3 \
+    libxi6 \
+    libxrandr2 \
+    libxrender1 \
+    libxss1 \
+    libxtst6 \
+    xvfb \
     --no-install-recommends && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
@@ -38,12 +60,26 @@ FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "./ASMLMonitoring.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
+# Install Playwright and browsers in the build stage
+FROM build AS playwright-install
+WORKDIR /app/build
+RUN dotnet tool install --global Microsoft.Playwright.CLI
+ENV PATH="${PATH}:/root/.dotnet/tools"
+RUN playwright install chromium --with-deps
+
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final
 WORKDIR /home/site/wwwroot
 COPY --from=publish /app/publish .
 ENV AzureWebJobsScriptRoot=/home/site/wwwroot \
     AzureFunctionsJobHost__Logging__Console__IsEnabled=true
+
+# Copy Playwright browsers from the build stage
+COPY --from=playwright-install /root/.cache/ms-playwright /root/.cache/ms-playwright
+
+# Install Playwright CLI in the final image
+RUN dotnet tool install --global Microsoft.Playwright.CLI
+ENV PATH="${PATH}:/root/.dotnet/tools"
 
 # Set environment variables
 ENV PATH="/usr/bin/chromedriver:${PATH}" \
