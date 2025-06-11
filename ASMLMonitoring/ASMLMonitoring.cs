@@ -29,33 +29,34 @@ public class ASMLMonitoring
 
     public async Task Monitor(string url)
     {
-            var options = new ChromeOptions();
-            options.AddArgument("--headless");
-            options.AddArgument("--disable-gpu");
-            options.AddArgument("--no-sandbox");
-            options.AddArgument("--disable-dev-shm-usage");
-            options.BinaryLocation = "/usr/bin/google-chrome";
+        var options = new ChromeOptions();
+        options.AddArgument("--headless=new");
+        options.AddArgument("--disable-gpu");
+        options.AddArgument("--no-sandbox");
+        options.AddArgument("--disable-dev-shm-usage");
+        options.AddArgument("--remote-debugging-port=9222");
+        options.BinaryLocation = "/usr/bin/google-chrome";
 
-            using var driver = new ChromeDriver(options);
+        using var driver = new ChromeDriver(options);
 
-            driver.Navigate().GoToUrl(url);
+        driver.Navigate().GoToUrl(url);
 
-            // Wait up to 10 seconds for the job list to load
-            var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
-            var selector = Environment.GetEnvironmentVariable("JOB_ELEMENT_SELECTOR") ?? "li[class^='orders-']";
-            var jobItems = driver.FindElements(By.CssSelector(selector));
+        // Wait up to 10 seconds for the job list to load
+        var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+        var selector = Environment.GetEnvironmentVariable("JOB_ELEMENT_SELECTOR") ?? "li[class^='orders-']";
+        var jobItems = driver.FindElements(By.CssSelector(selector));
 
-            if (jobItems.Count == 0)
-            {
-                _logger.LogInformation("No Joblisting found.");
-                await SendEmailAsync($"No Joblisting found on {url}", url);    
-            }
-            else
-            {
-                _logger.LogInformation($"Jobs found on {url}");
-            }
+         if (jobItems.Count == 0)
+          {
+              _logger.LogInformation("No Joblisting found.");
+              await SendEmailAsync($"No Joblisting found on {url}", url);    
+          }
+          else
+          {
+              _logger.LogInformation($"Jobs found on {url}");
+          }
 
-            driver.Quit();
+        driver.Quit();
     }
 
     public async Task SendEmailAsync(string messageBody, string url)
