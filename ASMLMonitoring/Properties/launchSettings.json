@@ -7,8 +7,11 @@
         "SENDGRID_API_KEY": "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",
         "EMAIL_FROM": "asmlmonitoring@gmail.com",
         "EMAIL_RECIPIENTS": "prince.jake.tamayo@accenture.com,jake.tamayo@asml.com",
-        "TIMER_SCHEDULE": "0 * * * * *"
-      }
+        "TIMER_SCHEDULE_EN": "0 * * * * *",
+        "JOB_ELEMENT_SELECTOR": "li[class^='order-1']",
+        "TIMER_SCHEDULE_DE": "0 * * * * *"
+      },
+      "nativeDebugging": false
     },
     "Container (Dockerfile)": {
       "commandName": "Docker",

@@ -81,11 +81,14 @@ COPY --from=playwright-install /root/.cache/ms-playwright /root/.cache/ms-playwr
 RUN dotnet tool install --global Microsoft.Playwright.CLI
 ENV PATH="${PATH}:/root/.dotnet/tools"
 
+# Copy Playwright browsers to the path where runtime will look
+COPY --from=playwright-install /root/.cache/ms-playwright /home/.cache/ms-playwright
+
 # Set environment variables
 ENV PATH="/usr/bin/chromedriver:${PATH}" \
     AzureFunctionsJobHost__Logging__Console__IsEnabled=true \
     FUNCTIONS_WORKER_RUNTIME=dotnet-isolated \
     TIMER_SCHEDULE="0 * * * * *" \
     EMAIL_FROM="asmlmonitoring@gmail.com" \
-    EMAIL_RECIPIENTS="prince.jake.tamayo@accenture.com"
-    PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+    EMAIL_RECIPIENTS="prince.jake.tamayo@accenture.com" \
+    PLAYWRIGHT_BROWSERS_PATH=/home/.cache/ms-playwright
