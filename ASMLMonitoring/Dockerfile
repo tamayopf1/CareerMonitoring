@@ -58,6 +58,8 @@ RUN dotnet tool install --global Microsoft.Playwright.CLI \
     && export PATH="$PATH:/root/.dotnet/tools" \
     && playwright install --with-deps
 
+RUN pwsh bin/Release/net8.0/playwright.ps1 install
+
 FROM base AS final
 WORKDIR /home/site/wwwroot
 COPY --from=build /app/publish .
@@ -67,7 +69,6 @@ ENV AzureWebJobsScriptRoot=/home/site/wwwroot \
     TIMER_SCHEDULE="0 * * * * *" \
     EMAIL_FROM="asmlmonitoring@gmail.com" \
     EMAIL_RECIPIENTS="prince.jake.tamayo@accenture.com" \
-    PLAYWRIGHT_BROWSERS_PATH=0 \
-    PATH="/root/.dotnet/tools:/usr/bin/chromedriver:${PATH}"
+    PLAYWRIGHT_BROWSERS_PATH=0 
 
 # No need to copy browser cache manually; PLAYWRIGHT_BROWSERS_PATH=0 ensures correct location
