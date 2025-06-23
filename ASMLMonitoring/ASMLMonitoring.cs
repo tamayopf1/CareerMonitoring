@@ -34,7 +34,7 @@ public class ASMLMonitoring
             options.AddArgument("--disable-gpu");
             options.AddArgument("--no-sandbox");
             options.AddArgument("--disable-dev-shm-usage");
-            options.BinaryLocation = "/usr/bin/google-chrome";
+            //options.BinaryLocation = "/usr/bin/google-chrome";
 
             using var driver = new ChromeDriver(options);
 
