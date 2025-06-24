@@ -42,7 +42,7 @@ public class ASMLMonitoring
 
             // Wait up to 10 seconds for the job list to load
             var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
-            var selector = Environment.GetEnvironmentVariable("JOB_ELEMENT_SELECTOR") ?? "li[class^='orders-']";
+            var selector = Environment.GetEnvironmentVariable("JOB_ELEMENT_SELECTOR") ?? "li[class^='order-1']";
             var jobItems = driver.FindElements(By.CssSelector(selector));
 
             if (jobItems.Count == 0)
